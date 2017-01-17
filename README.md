@@ -32,8 +32,8 @@ endpoint returned by chalice:
 Note: You need to set the content type to 'application/json'.
 
 ## Usage
-To use this, generate a javascript SDK by running `chalice generate-sdk emailer-sdk`
-then create a form like:
+To use this, deploy as above, then generate a javascript SDK by running 
+`chalice generate-sdk example/sdk` and create a form like:
 
     <form>
       <!-- Change this to match a whitelisted domain in `config.ini` -->
@@ -49,4 +49,4 @@ to submit the form because it needs to be submitted as JSON with a content type
 of `application/json` which isn't possible when directly submitting the form
 in a browser.
 
-For a complete example, see the `examples` directory.
+For a complete example, see the `example` directory.
