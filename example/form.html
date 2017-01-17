@@ -1,0 +1,123 @@
+<html>
+  <head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Example - Contact us</h1>
+      <h2>Setup</h2>
+      <p>Before running this project:</p>
+      <ol>
+        <li>Change into the `example` directory and run `chalice generate-sdk example`</li>
+        <li>Change the hidden 'domain' field to one you've whitelisted in the config file and deployed.</li>
+      </ol>
+      <form id="email_form">
+        <!-- Change this to match a whitelisted domain in `config.ini` -->
+        <input type="hidden" name="domain" id="domain" value="example.com"/>
+
+        <div class="form-group">
+          <label for="sender_name">Name</label>
+          <input type="text" class="form-control" id="sender_name"
+                 placeholder="Name">
+        </div>
+        <div class="form-group">
+          <label for="sender_email">Email address</label>
+          <input type="email" class="form-control" id="sender_email"
+                 placeholder="Email address">
+        </div>
+        <div class="form-group">
+          <label for="body">Message</label>
+          <textarea class="form-control" rows="3" id="body" placeholder="Please enter your message..."></textarea>
+        </div>
+        <div class="row">
+          <div class="col-md-11">
+            <div class="alert alert-info hidden" role="alert" id="status_active">
+              <i class="fa fa-spinner fa-spin fa fa-fw"></i> Sending message...
+              <span class="sr-only">Sending message...</span>
+            </div>
+            <div class="alert alert-success hidden" role="alert" id="status_success">
+              <p>Message successfully sent!</p>
+            </div>
+            <div class="alert alert-danger hidden" role="alert" id="status_error">
+              <p>There was a problem sending your message. Please complete all fields and try again.</p>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <button type="submit" class="btn btn-lg btn-primary pull-right">Send</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+
+  <script src="https://use.fontawesome.com/96e0f5f5c6.js"></script>
+  <script type="text/javascript"
+          src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+  <script type="text/javascript"
+          src="sdk/lib/axios/dist/axios.standalone.js"></script>
+  <script type="text/javascript"
+          src="sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+  <script type="text/javascript"
+          src="sdk/lib/CryptoJS/rollups/sha256.js"></script>
+  <script type="text/javascript"
+          src="sdk/lib/CryptoJS/components/hmac.js"></script>
+  <script type="text/javascript"
+          src="sdk/lib/CryptoJS/components/enc-base64.js"></script>
+  <script type="text/javascript"
+          src="sdk/lib/url-template/url-template.js"></script>
+  <script type="text/javascript"
+          src="sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+  <script type="text/javascript"
+          src="sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+  <script type="text/javascript"
+          src="sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+  <script type="text/javascript"
+          src="sdk/lib/apiGatewayCore/utils.js"></script>
+  <script type="text/javascript" src="sdk/apigClient.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#email_form').on('submit', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var domain = $('#domain').val();
+        var sender_name = $('#sender_name').val();
+        var sender_email = $('#sender_email').val();
+        var body = $('#body').val();
+
+        if (body.length === 0) {
+          $('#status_error').removeClass('hidden');
+          $('#status_success').addClass('hidden');
+          $('#status_active').addClass('hidden');
+          return;
+        }
+
+        var request = {
+          domain: domain,
+          sender_name: sender_name,
+          sender_email: sender_email,
+          body: body
+        };
+
+        var apigClient = apigClientFactory.newClient();
+
+        $('#status_active').removeClass('hidden');
+        $('#status_error').addClass('hidden');
+        $('#status_success').addClass('hidden');
+
+        apigClient.rootPost({}, request, {})
+          .then(function(result){
+            $('#status_active').addClass('hidden');
+            $('#status_success').removeClass('hidden');
+          }).catch( function(result){
+            $('#status_active').addClass('hidden');
+            $('#status_error').removeClass('hidden');
+        });
+      });
+    });
+  </script>
+</html>
